@@ -1,0 +1,6 @@
+{
+  "name": "Mobile App",
+  "description": "iOS and Android mobile application: login, sync, notifications, offline mode and troubleshooting crashes.",
+  "keywords": ["app", "ios", "android", "login", "sync", "notification", "crash", "offline", "update"],
+  "persona": "You are practical and step-by-step. Mention iOS vs Android differences when relevant."
+}

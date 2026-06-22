@@ -1,0 +1,11 @@
+# SLIM dependency set — Streamlit intro page + live LLM intake + Drive uploads.
+# This is what Streamlit Community Cloud installs (it reads requirements.txt).
+# Kept minimal so the cloud build is fast and reliable.
+#
+# Need the other channels (RAG/Supabase, Telegram, FastAPI)? Use requirements-full.txt.
+
+streamlit>=1.36.0                 # the intro page + chat UI
+openai>=1.40.0                    # OpenAI-compatible client, pointed at OpenRouter
+python-dotenv>=1.0.1              # .env loading (config)
+google-api-python-client>=2.130.0 # Google Drive API client (uploads)
+google-auth>=2.30.0               # service-account credentials for Drive

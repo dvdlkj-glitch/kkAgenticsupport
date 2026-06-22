@@ -1,0 +1,46 @@
+flowchart TD
+    subgraph Channels["User channels"]
+        TG["Telegram Bot"]
+        WEB["Apple-style Web Page<br/>(chat widget)"]
+        ST["Streamlit Console"]
+    end
+
+    WEB -->|POST /chat| API["FastAPI /chat"]
+    TG --> PIPE
+    ST --> PIPE
+    API --> PIPE
+
+    PIPE["Pipeline (orchestrator)"] --> R
+
+    subgraph Agent1["Agent 1 — ROUTER (Gemma model A)"]
+        R{"Which project<br/>is this about?"}
+    end
+
+    R -->|low confidence / unknown| CLAR["Ask user to pick a project"]
+    CLAR --> WEB
+    R -->|project + confidence| A2
+
+    subgraph Agent2["Agent 2 — ANSWER (Gemma model B)"]
+        A2["Embed question"] --> VS
+        VS["Vector search in Supabase<br/>(pgvector, this project only)"] --> CTX["Build context from<br/>top-K doc/FAQ chunks"]
+        CTX --> GEN["Generate grounded answer"]
+    end
+
+    GEN --> LOG["Log to conversations table"]
+    LOG --> OUT["Answer + sources -> user"]
+
+    subgraph Data["Supabase (Postgres + pgvector)"]
+        P[("projects")]
+        D[("documents / FAQ<br/>+ embeddings")]
+        C[("conversations")]
+    end
+
+    R -.reads.-> P
+    VS -.reads.-> D
+    LOG -.writes.-> C
+
+    ING["Ingestion script<br/>docs + FAQ per project"] -.embeds & writes.-> D
+    ING -.upserts.-> P
+
+    OR["OpenRouter API"] -.serves models.-> Agent1
+    OR -.serves models.-> Agent2

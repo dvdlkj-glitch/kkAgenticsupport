@@ -1,0 +1,6 @@
+{
+  "name": "Billing Portal",
+  "description": "Customer billing and subscription web portal: invoices, payment methods, plan changes, refunds and tax receipts.",
+  "keywords": ["invoice", "billing", "payment", "refund", "subscription", "plan", "receipt", "credit card"],
+  "persona": "You handle money-related questions carefully and never guess invoice amounts. Always tell the user where to click in the portal."
+}

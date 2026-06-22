@@ -1,0 +1,27 @@
+# FULL dependency set — all channels (web API, Telegram, Streamlit console, RAG, ingestion).
+# Use this when you wire up the answer-from-docs pipeline (Supabase + embeddings),
+# the FastAPI /chat backend, or the Telegram bot.
+# For the Streamlit intro demo, the slim requirements.txt is enough (and builds faster).
+
+# Core LLM + data
+openai>=1.40.0            # OpenAI-compatible client, pointed at OpenRouter
+supabase>=2.7.0           # Supabase Python client (Postgres + pgvector)
+python-dotenv>=1.0.1
+numpy>=1.26.0
+
+# Embeddings (local, free). Swap for an API backend if you prefer.
+sentence-transformers>=3.0.0
+
+# Channels
+python-telegram-bot>=21.4 # Telegram bot (async)
+streamlit>=1.36.0         # Support console web app
+fastapi>=0.111.0          # /chat API consumed by the Apple-style web page
+uvicorn[standard]>=0.30.0 # ASGI server for FastAPI
+
+# Ingestion helpers
+pypdf>=4.2.0              # optional: ingest PDF docs
+
+# File uploads (web chat -> Google Drive)
+python-multipart>=0.0.9          # required by FastAPI for file uploads (UploadFile/Form)
+google-api-python-client>=2.130.0 # Google Drive API client
+google-auth>=2.30.0              # service-account credentials for Drive

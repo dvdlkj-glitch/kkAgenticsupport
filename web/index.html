@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>kkAgentic Support — AI agents for every project</title>
+<style>
+  :root{
+    --bg:#fbfbfd; --ink:#1d1d1f; --muted:#6e6e73; --line:#d2d2d7;
+    --blue:#0071e3; --blue-press:#0077ed; --card:#ffffff;
+    --radius:20px; --maxw:980px;
+    --font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--font);color:var(--ink);background:var(--bg);
+    -webkit-font-smoothing:antialiased;line-height:1.5}
+  a{color:var(--blue);text-decoration:none}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px}
+
+  /* nav */
+  nav{position:sticky;top:0;z-index:50;backdrop-filter:saturate(180%) blur(20px);
+    background:rgba(251,251,253,.8);border-bottom:1px solid rgba(0,0,0,.06)}
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:52px}
+  nav .brand{font-weight:600;font-size:17px;letter-spacing:-.01em}
+  nav .links a{color:var(--ink);font-size:14px;margin-left:26px;opacity:.85}
+  nav .links a:hover{opacity:1;color:var(--blue)}
+  @media(max-width:640px){nav .links a{margin-left:16px;font-size:13px}}
+
+  /* hero */
+  .hero{text-align:center;padding:90px 0 70px}
+  .hero h1{font-size:clamp(40px,7vw,72px);font-weight:700;letter-spacing:-.03em;line-height:1.05}
+  .hero .sub{font-size:clamp(19px,2.4vw,26px);color:var(--muted);margin-top:18px;
+    font-weight:400;max-width:660px;margin-left:auto;margin-right:auto}
+  .cta{margin-top:34px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  .btn{display:inline-block;padding:12px 22px;border-radius:980px;font-size:16px;font-weight:500;
+    transition:.2s}
+  .btn-primary{background:var(--blue);color:#fff}
+  .btn-primary:hover{background:var(--blue-press)}
+  .btn-ghost{background:transparent;color:var(--blue);border:1px solid var(--line)}
+  .btn-ghost:hover{border-color:var(--blue)}
+
+  section{padding:72px 0}
+  .eyebrow{color:var(--blue);font-weight:600;font-size:15px;letter-spacing:.02em;text-align:center}
+  .h2{font-size:clamp(30px,4.5vw,46px);font-weight:700;letter-spacing:-.02em;text-align:center;margin-top:8px}
+  .lead{color:var(--muted);font-size:19px;text-align:center;max-width:680px;margin:16px auto 0}
+
+  /* flow diagram */
+  .flow{margin-top:54px;display:grid;gap:18px}
+  .row{display:flex;gap:18px;align-items:stretch;justify-content:center;flex-wrap:wrap}
+  .node{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:20px 22px;flex:1 1 240px;max-width:300px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+  .node h4{font-size:17px;font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+  .node p{font-size:14px;color:var(--muted)}
+  .badge{font-size:12px;font-weight:600;color:#fff;background:var(--blue);border-radius:999px;
+    padding:2px 9px}
+  .badge.g2{background:#34c759}
+  .badge.store{background:#5e5ce6}
+  .arrow{display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:22px}
+
+  /* projects */
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;margin-top:46px}
+  .pcard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:26px}
+  .pcard h3{font-size:21px;font-weight:600;letter-spacing:-.01em}
+  .pcard p{color:var(--muted);font-size:15px;margin-top:8px}
+  .pcard .dot{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#0071e3,#42a5ff);
+    display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;margin-bottom:14px}
+
+  /* chat */
+  .chat-sec{background:#000;color:#f5f5f7;border-radius:0}
+  .chat-card{max-width:720px;margin:40px auto 0;background:#1c1c1e;border:1px solid #2c2c2e;
+    border-radius:24px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+  .chat-head{padding:16px 20px;border-bottom:1px solid #2c2c2e;display:flex;align-items:center;gap:10px}
+  .chat-head .traffic{display:flex;gap:7px}
+  .chat-head .traffic i{width:12px;height:12px;border-radius:50%;display:block}
+  .t-r{background:#ff5f57}.t-y{background:#febc2e}.t-g{background:#28c840}
+  .chat-head .title{font-size:13px;color:#8e8e93;margin-left:6px}
+  .chat-body{height:360px;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:12px}
+  .msg{max-width:80%;padding:11px 15px;border-radius:18px;font-size:15px;line-height:1.45;white-space:pre-wrap}
+  .msg.user{align-self:flex-end;background:var(--blue);color:#fff;border-bottom-right-radius:5px}
+  .msg.bot{align-self:flex-start;background:#2c2c2e;color:#f5f5f7;border-bottom-left-radius:5px}
+  .msg .meta{display:block;font-size:11px;opacity:.7;margin-bottom:4px}
+  .chat-input{display:flex;gap:10px;padding:14px;border-top:1px solid #2c2c2e;background:#161617}
+  .chat-input input{flex:1;background:#2c2c2e;border:none;color:#fff;border-radius:999px;
+    padding:12px 16px;font-size:15px;outline:none}
+  .chat-input button{background:var(--blue);border:none;color:#fff;width:42px;height:42px;border-radius:50%;
+    font-size:18px;cursor:pointer}
+  .chat-input button:disabled{opacity:.5;cursor:default}
+  .hint{text-align:center;color:#8e8e93;font-size:13px;margin-top:16px}
+  .hint code{background:#2c2c2e;padding:2px 6px;border-radius:6px}
+
+  /* ===================== ANIMATED FLOW (scroll-triggered) ===================== */
+  .flowviz{max-width:560px;margin:54px auto 0;display:flex;flex-direction:column}
+  .fv-stage{position:relative;background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:15px 18px;display:flex;align-items:center;gap:14px;box-shadow:0 1px 3px rgba(0,0,0,.04);
+    transition:border-color .45s,box-shadow .45s,transform .45s}
+  .fv-stage.active{border-color:var(--blue);box-shadow:0 10px 30px rgba(0,113,227,.16);transform:translateY(-2px)}
+  .fv-stage.g2.active{border-color:#34c759;box-shadow:0 10px 30px rgba(52,199,89,.16)}
+  .fv-stage.store.active{border-color:#5e5ce6;box-shadow:0 10px 30px rgba(94,92,230,.16)}
+  .fv-stage .ic{width:40px;height:40px;border-radius:11px;flex:none;display:flex;align-items:center;
+    justify-content:center;font-size:18px;font-weight:700;background:#eef4ff;color:var(--blue);
+    transition:background .45s,color .45s}
+  .fv-stage.g2 .ic{background:#eafaf0;color:#2aa14e}
+  .fv-stage.store .ic{background:#efeefe;color:#5e5ce6}
+  .fv-stage.active .ic{background:var(--blue);color:#fff}
+  .fv-stage.g2.active .ic{background:#34c759;color:#fff}
+  .fv-stage.store.active .ic{background:#5e5ce6;color:#fff}
+  .fv-stage .tx{min-width:0}
+  .fv-stage .tx h4{font-size:15.5px;font-weight:600;letter-spacing:-.01em}
+  .fv-stage .tx p{font-size:13px;color:var(--muted);margin-top:2px}
+  .fv-stage .chip{margin-left:auto;font-size:12px;font-weight:600;color:var(--blue);white-space:nowrap;
+    opacity:0;transform:translateX(-6px);transition:.45s;padding-left:10px}
+  .fv-stage.g2 .chip{color:#2aa14e}.fv-stage.store .chip{color:#5e5ce6}
+  .fv-stage.active .chip{opacity:1;transform:none}
+  .fv-link{height:30px;position:relative;display:flex;justify-content:center}
+  .fv-link::before{content:"";position:absolute;top:0;bottom:0;width:2px;background:var(--line)}
+  .fv-dot{position:absolute;top:-3px;width:11px;height:11px;border-radius:50%;background:var(--blue);
+    box-shadow:0 0 0 4px rgba(0,113,227,.16);opacity:0}
+  .fv-link.go .fv-dot{animation:fvTravel .68s ease forwards}
+  @keyframes fvTravel{0%{opacity:0;transform:translateY(0)}14%{opacity:1}86%{opacity:1}100%{opacity:0;transform:translateY(33px)}}
+
+  /* ===================== TWO-AGENT LIVE ANIMATION ===================== */
+  #agents{background:#f5f5f7}
+  .agviz{max-width:860px;margin:46px auto 0;display:flex;flex-direction:column}
+  .ag-bubble{max-width:80%;padding:12px 16px;border-radius:18px;font-size:15px;line-height:1.5;
+    opacity:0;transform:translateY(10px);transition:.5s}
+  .ag-bubble.show{opacity:1;transform:none}
+  .ag-bubble.user{align-self:flex-end;background:var(--blue);color:#fff;border-bottom-right-radius:6px}
+  .ag-bubble.bot{align-self:flex-start;background:#fff;border:1px solid var(--line);border-bottom-left-radius:6px;
+    box-shadow:0 6px 22px rgba(0,0,0,.05)}
+  .ag-bubble .meta{display:block;font-size:11.5px;margin-top:7px}
+  .ag-bubble.user .meta{color:#cfe4ff}.ag-bubble.bot .meta{color:var(--muted);font-weight:500}
+  .kw{border-radius:5px;padding:0 3px;transition:background .4s,color .4s}
+  .kw-on .kw{background:#0a84ff;color:#fff}
+
+  .ag-cards{display:grid;grid-template-columns:1fr 34px 1fr;align-items:stretch;gap:12px;margin:16px 0}
+  @media(max-width:720px){.ag-cards{grid-template-columns:1fr}.ag-handoff{transform:rotate(90deg)}}
+  .ag-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;opacity:.45;
+    transition:opacity .5s,box-shadow .5s,border-color .5s}
+  .ag-card.active{opacity:1;border-color:rgba(0,113,227,.4);box-shadow:0 12px 34px rgba(0,0,0,.07)}
+  .ag-card.g2.active{border-color:rgba(52,199,89,.45)}
+  .ag-head{display:flex;align-items:center;gap:9px;margin-bottom:6px}
+  .ag-badge{font-size:11px;font-weight:700;color:#fff;background:var(--blue);border-radius:999px;padding:3px 10px}
+  .ag-card.g2 .ag-badge{background:#34c759}
+  .ag-title{font-size:13.5px;font-weight:600}
+  .ag-q{font-size:13px;background:#f5f5f7;border-radius:10px;padding:8px 11px;margin-top:10px;line-height:1.5}
+  .kwnote{color:var(--blue);font-weight:600;font-size:11px;opacity:0;transition:.4s;margin-left:4px}
+  .kw-on .kwnote{opacity:1}
+  .ag-meter{margin-top:13px;opacity:0;transition:.4s}.ag-meter.on{opacity:1}
+  .ag-meter .lab{display:flex;justify-content:space-between;font-size:12.5px;font-weight:600;margin-bottom:6px}
+  .ag-meter .pct{color:var(--blue)}
+  .ag-bar{height:7px;border-radius:99px;background:#e6e6eb;overflow:hidden}
+  .ag-bar i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,#0071e3,#56a9ff);transition:width 1s ease}
+  .ag-meter.fill .ag-bar i{width:90%}
+  .ag-gate{margin-top:12px;font-size:12.5px;font-weight:600;color:#2aa14e;display:flex;gap:6px;align-items:flex-start;
+    opacity:0;transform:translateY(4px);transition:.4s}
+  .ag-gate.on{opacity:1;transform:none}
+  .ag-handoff{align-self:center;color:var(--line);font-size:22px;font-weight:700;transition:color .4s}
+  .ag-handoff.on{color:var(--blue)}
+  .ag-step{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:9px;margin-top:13px;
+    opacity:0;transform:translateY(4px);transition:.4s}
+  .ag-step.on{opacity:1;transform:none;color:var(--ink)}
+  .ag-step .n{width:19px;height:19px;border-radius:50%;border:1.5px solid var(--line);font-size:11px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;flex:none;transition:.4s}
+  .ag-step.on .n{border-color:#34c759;background:#34c759;color:#fff}
+  .ag-vec{display:grid;grid-template-columns:repeat(12,1fr);gap:4px;margin-top:9px}
+  .ag-vec i{aspect-ratio:1;border-radius:3px;background:#e9e9ee;transition:background .35s}
+  .ag-vec.on i{background:#34c759}.ag-vec.on i.lo{background:#bfe9cb}
+  .ag-chunks{margin-top:9px;display:flex;flex-direction:column;gap:7px}
+  .ag-chunk{display:flex;align-items:center;gap:8px;opacity:.4;transition:opacity .5s}
+  .ag-chunk .cl{flex:0 0 48%;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ag-chunk .cb{flex:1;height:6px;border-radius:99px;background:#e9e9ee;overflow:hidden}
+  .ag-chunk .cb i{display:block;height:100%;width:0;background:#c7c7cc;transition:width .85s ease}
+  .ag-chunk .tag{flex:none;font-size:10px;font-weight:700;color:#2aa14e;opacity:0;transition:.4s}
+  .ag-chunks.on .ag-chunk{opacity:.5}
+  .ag-chunks.on .ag-chunk.use{opacity:1}
+  .ag-chunks.on .ag-chunk .cb i{width:var(--w)}
+  .ag-chunks.on .ag-chunk.use .cb i{background:linear-gradient(90deg,#34c759,#86e29c)}
+  .ag-chunks.on .ag-chunk.use .tag{opacity:1}
+  .ag-typing{display:inline-flex;gap:4px;margin-left:4px;opacity:0;transition:.3s;vertical-align:middle}
+  .ag-typing.on{opacity:1}
+  .ag-typing span{width:6px;height:6px;border-radius:50%;background:#34c759;animation:agBlink 1.1s infinite}
+  .ag-typing span:nth-child(2){animation-delay:.18s}.ag-typing span:nth-child(3){animation-delay:.36s}
+  @keyframes agBlink{0%,100%{opacity:.3;transform:translateY(0)}50%{opacity:1;transform:translateY(-3px)}}
+  #ag-ans .ans-word{opacity:0;transition:opacity .3s;transition-delay:calc(var(--wi) * 38ms)}
+  #ag-ans.reveal .ans-word{opacity:1}
+  .ag-note{text-align:center;color:var(--muted);font-size:13px;margin-top:20px}
+  .ag-note b{color:var(--ink);font-weight:600}
+  @media(prefers-reduced-motion:reduce){
+    .fv-stage,.ag-bubble,.ag-card,.ag-step,.ag-meter,.ag-gate,#ag-ans .ans-word,.kwnote,.ag-chunk .tag,.fv-stage .chip{transition:none}
+    .fv-link.go .fv-dot{animation:none}
+  }
+
+  footer{padding:40px 0;border-top:1px solid var(--line);color:var(--muted);font-size:13px;text-align:center}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="brand">⌘ kkAgentic Support</div>
+    <div class="links">
+      <a href="#how">How it works</a>
+      <a href="#projects">Projects</a>
+      <a href="#try">Try it</a>
+      <a href="chat.html">Live chat ↗</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero wrap">
+  <h1>Every project gets<br/>its own AI agent.</h1>
+  <p class="sub">One assistant understands your question and routes it. A dedicated project agent answers it — grounded in that project's own docs and FAQ.</p>
+  <div class="cta">
+    <a class="btn btn-primary" href="#try">Ask a question</a>
+    <a class="btn btn-ghost" href="#how">See how it works</a>
+  </div>
+</header>
+
+<!-- HOW IT WORKS / FLOW -->
+<section id="how">
+  <div class="wrap">
+    <div class="eyebrow">The structure</div>
+    <h2 class="h2">Two agents. One smooth answer.</h2>
+    <p class="lead">Your question flows through a router agent and a project answer agent, backed by a vector knowledge base.</p>
+
+    <div class="flowviz" id="flowviz">
+      <div class="fv-stage"><div class="ic">📨</div><div class="tx"><h4>You ask</h4><p>Web page · Telegram · Streamlit — one shared pipeline</p></div><span class="chip">one question</span></div>
+      <div class="fv-link"><span class="fv-dot"></span></div>
+      <div class="fv-stage"><div class="ic">⌘</div><div class="tx"><h4>Pipeline</h4><p>handle_question() — the spine every channel calls</p></div><span class="chip">orchestrates</span></div>
+      <div class="fv-link"><span class="fv-dot"></span></div>
+      <div class="fv-stage"><div class="ic">1</div><div class="tx"><h4>Router · Agent 1</h4><p>Which project is this about? + a confidence score</p></div><span class="chip">Billing Portal · 90%</span></div>
+      <div class="fv-link"><span class="fv-dot"></span></div>
+      <div class="fv-stage g2"><div class="ic">2</div><div class="tx"><h4>Project agent · Agent 2</h4><p>Retrieve relevant chunks, then write — grounded only in them</p></div><span class="chip">grounded answer</span></div>
+      <div class="fv-link"><span class="fv-dot"></span></div>
+      <div class="fv-stage store"><div class="ic">🗄</div><div class="tx"><h4>Knowledge base</h4><p>Supabase + pgvector — each project's docs &amp; FAQ, kept separate</p></div><span class="chip">top-K chunks</span></div>
+      <div class="fv-link"><span class="fv-dot"></span></div>
+      <div class="fv-stage"><div class="ic">✅</div><div class="tx"><h4>Grounded answer → you</h4><p>Answer + sources, then logged for analytics</p></div><span class="chip">back to you</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- TWO AGENTS IN ACTION -->
+<section id="agents">
+  <div class="wrap">
+    <div class="eyebrow">Inside the engine</div>
+    <h2 class="h2">Watch the two agents work.</h2>
+    <p class="lead">One real question, start to finish: the router places it, the project agent grounds the answer in your own docs — then replies.</p>
+
+    <div class="agviz" id="agviz">
+      <div class="ag-bubble user" id="ag-q"><span class="meta">You · web chat</span>How do I download an <span class="kw">invoice</span>?</div>
+
+      <div class="ag-cards">
+        <!-- Agent 1: Router -->
+        <div class="ag-card" id="ag-a1">
+          <div class="ag-head"><span class="ag-badge">Agent 1</span><span class="ag-title">Router</span></div>
+          <div class="ag-q" id="ag-a1q">How do I download an <span class="kw">invoice</span>?<span class="kwnote">↳ keyword match</span></div>
+          <div class="ag-meter" id="ag-meter">
+            <div class="lab"><span>→ Billing Portal</span><span class="pct" id="ag-pct">0%</span></div>
+            <div class="ag-bar"><i></i></div>
+          </div>
+          <div class="ag-gate" id="ag-gate"><span>✓</span><span>Confident (≥ 0.45 gate) — hand off to the project agent.</span></div>
+        </div>
+
+        <div class="ag-handoff" id="ag-handoff">→</div>
+
+        <!-- Agent 2: Project answer agent (RAG) -->
+        <div class="ag-card g2" id="ag-a2">
+          <div class="ag-head"><span class="ag-badge">Agent 2</span><span class="ag-title">Billing Portal agent · RAG</span></div>
+          <div class="ag-step" id="ag-s1"><span class="n">1</span>Embed the question</div>
+          <div class="ag-vec" id="ag-vec"></div>
+          <div class="ag-step" id="ag-s2"><span class="n">2</span>Search Supabase (pgvector, this project only)</div>
+          <div class="ag-chunks" id="ag-chunks">
+            <div class="ag-chunk use" style="--w:94%"><span class="cl">“Download an invoice” — faq.md</span><span class="cb"><i></i></span><span class="tag">used</span></div>
+            <div class="ag-chunk use" style="--w:71%"><span class="cl">“Tax receipt / VAT” — faq.md</span><span class="cb"><i></i></span><span class="tag">used</span></div>
+            <div class="ag-chunk use" style="--w:57%"><span class="cl">“Update payment method” — faq.md</span><span class="cb"><i></i></span><span class="tag">used</span></div>
+            <div class="ag-chunk" style="--w:33%"><span class="cl">“Change my plan” — faq.md</span><span class="cb"><i></i></span><span class="tag">used</span></div>
+            <div class="ag-chunk" style="--w:26%"><span class="cl">“Card declined” — faq.md</span><span class="cb"><i></i></span><span class="tag">used</span></div>
+          </div>
+          <div class="ag-step" id="ag-s3"><span class="n">3</span>Write a grounded answer<span class="ag-typing" id="ag-typing"><span></span><span></span><span></span></span></div>
+        </div>
+      </div>
+
+      <div class="ag-bubble bot" id="ag-reply">
+        <span class="meta">Billing Portal · 90% match</span>
+        <span id="ag-ans">Sign in, open Billing → Invoices, and tap the download icon next to any invoice. PDFs include tax details.</span>
+        <span class="meta">Sources: faq.md</span>
+      </div>
+
+      <p class="ag-note">If the router <b>isn't</b> confident enough, it doesn't guess — it asks you to pick the right project.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects" style="background:#f5f5f7">
+  <div class="wrap">
+    <div class="eyebrow">Coverage</div>
+    <h2 class="h2">Projects we support</h2>
+    <p class="lead">Each card is an independent agent with its own knowledge. Loaded live from the backend when connected.</p>
+    <div class="grid" id="projects-grid">
+      <!-- filled by JS; static fallback below -->
+      <div class="pcard"><div class="dot">B</div><h3>Billing Portal</h3><p>Invoices, payment methods, plan changes, refunds and tax receipts.</p></div>
+      <div class="pcard"><div class="dot">M</div><h3>Mobile App</h3><p>Login, sync, notifications, offline mode and crash troubleshooting.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- TRY IT -->
+<section id="try" class="chat-sec">
+  <div class="wrap">
+    <div class="eyebrow">Live demo</div>
+    <h2 class="h2" style="color:#f5f5f7">Ask the agents</h2>
+    <p class="lead" style="color:#a1a1a6">Type a question. The router picks the project; the project agent answers.</p>
+
+    <div class="chat-card">
+      <div class="chat-head">
+        <div class="traffic"><i class="t-r"></i><i class="t-y"></i><i class="t-g"></i></div>
+        <span class="title">kkAgentic Support — chat</span>
+      </div>
+      <div class="chat-body" id="chat-body">
+        <div class="msg bot"><span class="meta">Assistant</span>Hi! Ask me anything about your projects — e.g. “How do I download an invoice?” or “The app keeps crashing.”</div>
+      </div>
+      <form class="chat-input" id="chat-form">
+        <input id="chat-text" type="text" placeholder="Type your question…" autocomplete="off" />
+        <button id="chat-send" type="submit" aria-label="Send">↑</button>
+      </form>
+    </div>
+    <p class="hint">Connects to your backend at <code id="api-label">API_BASE</code>. Set it at the top of this file's script. You can also reach the agents on Telegram or the Streamlit console.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    kkAgentic Support · Router + Project agents on OpenRouter · Supabase pgvector knowledge base<br/>
+    <a href="#" id="tg-link">Telegram bot</a> · <a href="#" id="st-link">Streamlit console</a>
+  </div>
+</footer>
+
+<script>
+  // ====== CONFIG — edit these for your deployment ======
+  const API_BASE   = "http://localhost:8000";          // FastAPI /chat endpoint base URL
+  const TELEGRAM   = "https://t.me/your_bot_username";   // your Telegram bot link
+  const STREAMLIT  = "https://your-app.streamlit.app";   // your Streamlit console link
+  // =====================================================
+
+  document.getElementById("api-label").textContent = API_BASE;
+  document.getElementById("tg-link").href = TELEGRAM;
+  document.getElementById("st-link").href = STREAMLIT;
+
+  const sessionId = "web-" + Math.random().toString(36).slice(2, 10);
+  let contextProject = null;
+
+  const body = document.getElementById("chat-body");
+  const form = document.getElementById("chat-form");
+  const input = document.getElementById("chat-text");
+  const sendBtn = document.getElementById("chat-send");
+
+  function addMsg(text, who, meta){
+    const el = document.createElement("div");
+    el.className = "msg " + who;
+    if(meta){ const m=document.createElement("span"); m.className="meta"; m.textContent=meta; el.appendChild(m); }
+    el.appendChild(document.createTextNode(text));
+    body.appendChild(el);
+    body.scrollTop = body.scrollHeight;
+    return el;
+  }
+
+  // Try to load real projects from the backend
+  (async function loadProjects(){
+    try{
+      const r = await fetch(API_BASE + "/projects");
+      if(!r.ok) return;
+      const data = await r.json();
+      if(!data.projects || !data.projects.length) return;
+      const grid = document.getElementById("projects-grid");
+      grid.innerHTML = "";
+      data.projects.forEach(p=>{
+        const c = document.createElement("div"); c.className="pcard";
+        c.innerHTML = `<div class="dot">${(p.name||"?")[0].toUpperCase()}</div>
+          <h3>${p.name}</h3><p>${p.description||""}</p>`;
+        grid.appendChild(c);
+      });
+    }catch(e){ /* keep static fallback */ }
+  })();
+
+  form.addEventListener("submit", async (e)=>{
+    e.preventDefault();
+    const q = input.value.trim();
+    if(!q) return;
+    addMsg(q, "user", "You");
+    input.value = ""; sendBtn.disabled = true;
+    const thinking = addMsg("…", "bot", "Assistant");
+
+    try{
+      const r = await fetch(API_BASE + "/chat", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({question:q, session_id:sessionId, project_key:contextProject})
+      });
+      const data = await r.json();
+      if(data.project_key) contextProject = data.project_key;
+      const meta = data.project_name && !data.needs_clarification
+        ? `${data.project_name} · ${(Math.round((data.confidence||0)*100))}% match`
+        : "Assistant";
+      thinking.remove();
+      const el = addMsg(data.answer || "(no answer)", "bot", meta);
+      if(data.sources && data.sources.length){
+        const s=document.createElement("div"); s.className="meta";
+        s.style.marginTop="6px"; s.textContent="Sources: "+data.sources.join(", ");
+        el.appendChild(s);
+      }
+    }catch(err){
+      thinking.remove();
+      addMsg("Couldn't reach the backend at " + API_BASE + ". Start the API (uvicorn api.main:app) or update API_BASE.", "bot", "Assistant");
+    }finally{
+      sendBtn.disabled = false; input.focus();
+    }
+  });
+</script>
+
+<script>
+  // ====== Scroll-triggered, looping explainer animations ======
+  const REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // Generic controller: plays a build's timeline on a loop while the root is in view.
+  function mountViz(root, build){
+    if(!root) return;
+    const ctrl = build(root);
+    if(REDUCED){ ctrl.finalState(); return; }
+    let running = false, timers = [];
+    const clearAll = () => { timers.forEach(clearTimeout); timers = []; };
+    function loop(){
+      ctrl.reset();
+      ctrl.timeline().forEach(s => timers.push(setTimeout(s.fn, s.at)));
+      timers.push(setTimeout(() => { if(running) loop(); }, ctrl.total));
+    }
+    new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if(e.isIntersecting && !running){ running = true; loop(); }
+        else if(!e.isIntersecting && running){ running = false; clearAll(); ctrl.reset(); }
+      });
+    }, { threshold: 0.35 }).observe(root);
+  }
+
+  // ---- Animation 1: the end-to-end flow ----
+  mountViz(document.getElementById("flowviz"), (root) => {
+    const stages = [...root.querySelectorAll(".fv-stage")];
+    const links  = [...root.querySelectorAll(".fv-link")];
+    const STEP = 1150;
+    return {
+      total: 400 + stages.length * STEP + 1400,
+      reset(){ stages.forEach(s => s.classList.remove("active")); links.forEach(l => l.classList.remove("go")); },
+      finalState(){ stages.forEach(s => s.classList.add("active")); },
+      timeline(){
+        const tl = [];
+        stages.forEach((s, i) => tl.push({ at: 300 + i * STEP, fn: () => s.classList.add("active") }));
+        links.forEach((l, i) => tl.push({ at: 300 + i * STEP + 560, fn: () => {
+          l.classList.remove("go"); void l.offsetWidth; l.classList.add("go");
+        }}));
+        return tl;
+      }
+    };
+  });
+
+  // ---- Animation 2: the two agents at work ----
+  mountViz(document.getElementById("agviz"), (root) => {
+    const $ = (id) => document.getElementById(id);
+    const q = $("ag-q"), a1 = $("ag-a1"), a1q = $("ag-a1q"), meter = $("ag-meter"),
+          pct = $("ag-pct"), gate = $("ag-gate"), handoff = $("ag-handoff"),
+          a2 = $("ag-a2"), s1 = $("ag-s1"), s2 = $("ag-s2"), s3 = $("ag-s3"),
+          vec = $("ag-vec"), chunks = $("ag-chunks"), typing = $("ag-typing"),
+          ans = $("ag-ans"), reply = $("ag-reply");
+
+    // build the vector grid once
+    if(vec && !vec.children.length){
+      for(let i = 0; i < 36; i++){
+        const c = document.createElement("i");
+        if(i % 9 === 0 || (i * 7) % 5 === 0) c.className = "lo";
+        c.style.transitionDelay = (i * 8) + "ms";
+        vec.appendChild(c);
+      }
+    }
+    // split the answer into per-word spans once
+    if(ans && !ans.querySelector(".ans-word")){
+      ans.innerHTML = ans.textContent.trim().split(" ")
+        .map((w, i) => `<span class="ans-word" style="--wi:${i}">${w}</span>`).join(" ");
+    }
+    const words = [...ans.querySelectorAll(".ans-word")];
+
+    let countRAF = null;
+    function countTo(target, dur){
+      cancelAnimationFrame(countRAF);
+      const start = performance.now();
+      (function tick(now){
+        const p = Math.min(1, (now - start) / dur);
+        pct.textContent = Math.round(p * target) + "%";
+        if(p < 1) countRAF = requestAnimationFrame(tick);
+      })(start);
+    }
+
+    return {
+      total: 9600,
+      reset(){
+        cancelAnimationFrame(countRAF);
+        [q, reply].forEach(e => e.classList.remove("show"));
+        [a1, a2].forEach(e => e.classList.remove("active"));
+        a1q.classList.remove("kw-on");
+        meter.classList.remove("on", "fill");
+        gate.classList.remove("on"); handoff.classList.remove("on");
+        [s1, s2, s3].forEach(e => e.classList.remove("on"));
+        vec.classList.remove("on"); chunks.classList.remove("on");
+        typing.classList.remove("on"); ans.classList.remove("reveal");
+        pct.textContent = "0%";
+      },
+      finalState(){
+        q.classList.add("show"); a1.classList.add("active"); a1q.classList.add("kw-on");
+        meter.classList.add("on", "fill"); pct.textContent = "90%";
+        gate.classList.add("on"); handoff.classList.add("on"); a2.classList.add("active");
+        [s1, s2, s3].forEach(e => e.classList.add("on"));
+        vec.classList.add("on"); chunks.classList.add("on");
+        ans.classList.add("reveal"); reply.classList.add("show");
+      },
+      timeline(){
+        return [
+          { at: 150,  fn: () => q.classList.add("show") },
+          { at: 850,  fn: () => a1.classList.add("active") },
+          { at: 1550, fn: () => a1q.classList.add("kw-on") },
+          { at: 2250, fn: () => { meter.classList.add("on", "fill"); countTo(90, 950); } },
+          { at: 3250, fn: () => { gate.classList.add("on"); handoff.classList.add("on"); } },
+          { at: 4050, fn: () => { a2.classList.add("active"); s1.classList.add("on"); vec.classList.add("on"); } },
+          { at: 5150, fn: () => { s2.classList.add("on"); chunks.classList.add("on"); } },
+          { at: 6450, fn: () => { s3.classList.add("on"); typing.classList.add("on"); } },
+          { at: 7450, fn: () => { typing.classList.remove("on"); ans.classList.add("reveal"); reply.classList.add("show"); } }
+        ];
+      }
+    };
+  });
+</script>
+</body>
+</html>
