@@ -72,17 +72,47 @@ st.markdown(
     """
     <style>
       header[data-testid="stHeader"]{display:none}
-      .block-container{padding:0 !important; max-width:100% !important}
       [data-testid="stAppViewContainer"]{background:#ffffff}
       footer{display:none}
-      .kk-panel{max-width:640px;margin:0 auto;padding:0 16px;color:#1d1d1f;
-                font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif}
-      .kk-panel h2{letter-spacing:-0.02em;margin:34px 0 2px;color:#1d1d1f}
-      .kk-panel p.sub{color:#6e6e73;font-size:14px;margin-top:0}
+      .block-container{padding:0 !important; max-width:1040px !important; margin:0 auto !important}
+      [data-testid="stAppViewContainer"], [data-testid="stAppViewContainer"] *{
+        font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
+
+      /* brand lockup — matches the marketing header */
+      .kk-panel{max-width:680px;margin:0 auto;padding:0 16px;color:#1d1d1f}
+      .kk-brand{display:flex;align-items:center;gap:12px;margin:30px 0 8px}
+      .kk-logo{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;
+        justify-content:center;background:linear-gradient(135deg,#0071e3,#5e5ce6);color:#fff;
+        font-weight:800;letter-spacing:.4px;font-size:15px;box-shadow:0 4px 14px rgba(0,113,227,.30)}
+      .kk-title{font-size:22px;font-weight:700;letter-spacing:-0.02em;color:#1d1d1f}
+      .kk-title .dim{color:#6e6e73;font-weight:500}
+      .kk-sub{color:#6e6e73;font-size:14.5px;margin:0 0 6px}
+
+      /* chat bubbles — clean Apple cards, centered column */
+      [data-testid="stChatMessage"]{background:#ffffff;border:0.5px solid rgba(0,0,0,.10);
+        border-radius:16px;padding:12px 16px;margin:8px auto;max-width:680px;
+        box-shadow:0 1px 2px rgba(0,0,0,.05)}
+      [data-testid="stChatMessage"] *{color:#1d1d1f}
+      [data-testid="stChatInput"]{max-width:680px;margin:0 auto;background:#ffffff;
+        border:0.5px solid rgba(0,0,0,.14);border-radius:14px}
+
+      /* expander + form as light cards */
+      [data-testid="stExpander"]{max-width:680px;margin:10px auto;border:0.5px solid rgba(0,0,0,.10);
+        border-radius:14px;background:#ffffff;overflow:hidden}
+      [data-testid="stExpander"] summary{font-weight:600;color:#1d1d1f}
+      [data-testid="stForm"]{max-width:680px;margin:0 auto;border:0.5px solid rgba(0,0,0,.10);
+        border-radius:14px;background:#ffffff}
+
+      /* Apple-blue pill buttons */
+      .stButton button, [data-testid="stFormSubmitButton"] button{border-radius:980px;font-weight:600}
+
       /* Apple-light file-uploader dropzone */
       [data-testid="stFileUploaderDropzone"]{background:#f5f5f7 !important;
-                border:1px dashed #c7c7cc !important}
+        border:1px dashed #c7c7cc !important;border-radius:14px}
       [data-testid="stFileUploaderDropzone"] *{color:#1d1d1f !important}
+
+      /* center captions/markdown text in the panel column */
+      [data-testid="stCaptionContainer"]{max-width:680px;margin:0 auto}
     </style>
     """,
     unsafe_allow_html=True,
@@ -107,10 +137,11 @@ if "record_saved_as" not in st.session_state:
     st.session_state.record_saved_as = None
 
 st.markdown('<div class="kk-panel">', unsafe_allow_html=True)
-st.markdown("## 💬 kkAgentic Support intake")
 st.markdown(
-    '<p class="sub">Chat with the assistant below. It will collect your details, help '
-    "with your issue, and let you attach a screenshot or log.</p>",
+    '<div class="kk-brand"><span class="kk-logo">DL</span>'
+    '<span class="kk-title">David Lau <span class="dim">· KK Agentic Support</span></span></div>'
+    '<p class="kk-sub">Live support assistant — tell me about your request and I’ll guide you '
+    "step by step, then save the details to our support drive.</p>",
     unsafe_allow_html=True,
 )
 
