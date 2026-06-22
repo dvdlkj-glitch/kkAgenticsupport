@@ -75,8 +75,11 @@ st.markdown(
       [data-testid="stAppViewContainer"]{background:#ffffff}
       footer{display:none}
       .block-container{padding:0 !important; max-width:1040px !important; margin:0 auto !important}
-      [data-testid="stAppViewContainer"], [data-testid="stAppViewContainer"] *{
+      [data-testid="stAppViewContainer"]{
         font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
+      /* never override icon webfonts (was breaking the chat avatar -> "smart_toy") */
+      [data-testid="stIconMaterial"], span[class*="material-symbols"], .material-icons{
+        font-family:'Material Symbols Rounded','Material Symbols Outlined','Material Icons' !important}
 
       /* brand lockup — matches the marketing header */
       .kk-panel{max-width:680px;margin:0 auto;padding:0 16px;color:#1d1d1f}
@@ -113,6 +116,22 @@ st.markdown(
 
       /* center captions/markdown text in the panel column */
       [data-testid="stCaptionContainer"]{max-width:680px;margin:0 auto}
+
+      /* ---- guiding animations (subtle, Apple-restrained) ---- */
+      @keyframes kkFade{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+      @keyframes kkGlow{0%,100%{box-shadow:0 4px 14px rgba(0,113,227,.30)}
+                        50%{box-shadow:0 7px 22px rgba(0,113,227,.55)}}
+      @keyframes kkBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+      @keyframes kkPulse{0%,100%{opacity:.35;transform:scale(.8)}50%{opacity:1;transform:scale(1.15)}}
+      .kk-brand,.kk-sub{animation:kkFade .5s ease both}
+      .kk-logo{animation:kkGlow 2.8s ease-in-out infinite}
+      [data-testid="stChatMessage"]{animation:kkFade .45s ease both}
+      .kk-hint{display:inline-flex;align-items:center;gap:9px;margin:10px 0 2px;padding:8px 15px;
+        border-radius:980px;background:rgba(0,113,227,.10);color:#0071e3;font-size:13px;font-weight:600;
+        animation:kkFade .6s ease both}
+      .kk-hint .dot{width:8px;height:8px;border-radius:50%;background:#0071e3;
+        animation:kkPulse 1.4s ease-in-out infinite}
+      .kk-hint .arrow{display:inline-block;animation:kkBounce 1.4s ease-in-out infinite}
     </style>
     """,
     unsafe_allow_html=True,
@@ -141,7 +160,9 @@ st.markdown(
     '<div class="kk-brand"><span class="kk-logo">DL</span>'
     '<span class="kk-title">David Lau <span class="dim">· KK Agentic Support</span></span></div>'
     '<p class="kk-sub">Live support assistant — tell me about your request and I’ll guide you '
-    "step by step, then save the details to our support drive.</p>",
+    "step by step, then save the details to our support drive.</p>"
+    '<div class="kk-hint"><span class="dot"></span>Start by typing your reply below'
+    '<span class="arrow">↓</span></div>',
     unsafe_allow_html=True,
 )
 
@@ -153,8 +174,12 @@ if not LLM_READY:
     )
 
 # --- render chat history ---
+# Explicit emoji avatars so the bubble never falls back to Streamlit's
+# Material-icon avatar (which can render the raw "smart_toy" ligature).
+AVATARS = {"user": "🧑", "assistant": "💬"}
 for m in st.session_state.intake_msgs:
-    with st.chat_message("user" if m["role"] == "user" else "assistant"):
+    role = "user" if m["role"] == "user" else "assistant"
+    with st.chat_message(role, avatar=AVATARS[role]):
         st.markdown(m["content"])
 
 # --- chat input ---
