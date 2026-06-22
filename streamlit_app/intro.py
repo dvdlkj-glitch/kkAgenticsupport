@@ -94,6 +94,11 @@ st.markdown(
         color:var(--kk-ink);
         font-family:"Inter",-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif}
       .block-container{padding:0 !important; max-width:1040px !important; margin:0 auto !important}
+      /* clean, app-like look: hide page + iframe scrollbars (wheel still scrolls) */
+      ::-webkit-scrollbar{width:0 !important; height:0 !important; background:transparent}
+      html, body, [data-testid="stAppViewContainer"], [data-testid="stMain"]{
+        scrollbar-width:none; -ms-overflow-style:none;}
+      iframe{border:0 !important}
       /* never override icon webfonts (was breaking the chat avatar -> "smart_toy") */
       [data-testid="stIconMaterial"], span[class*="material-symbols"], .material-icons{
         font-family:'Material Symbols Rounded','Material Symbols Outlined','Material Icons' !important}
