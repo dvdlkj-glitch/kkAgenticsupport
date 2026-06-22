@@ -184,6 +184,23 @@ st.markdown(
       .kk-hint .dot{width:8px;height:8px;border-radius:50%;background:var(--kk-accent);
         box-shadow:0 0 10px 0 var(--kk-accent);animation:kkPulse 1.4s ease-in-out infinite}
       .kk-hint .arrow{display:inline-block;animation:kkBounce 1.4s ease-in-out infinite}
+
+      /* ---- mobile phones (≤640px) ---- */
+      @media (max-width:640px){
+        .block-container{padding:0 14px !important}
+        .kk-panel{padding:0; max-width:100%}
+        .kk-brand{margin:18px 0 6px; gap:10px}
+        .kk-logo{width:34px; height:34px; font-size:13px}
+        .kk-title{font-size:18px}
+        .kk-sub{font-size:13px}
+        .kk-hint{font-size:12px; flex-wrap:wrap; gap:7px; padding:7px 13px}
+        [data-testid="stChatMessage"], [data-testid="stChatInput"],
+        [data-testid="stExpander"], [data-testid="stForm"],
+        [data-testid="stCaptionContainer"]{max-width:100%}
+        [data-testid="stChatMessage"]{padding:11px 13px}
+        /* easy-to-tap full-width buttons */
+        .stButton button, [data-testid="stFormSubmitButton"] button{width:100%}
+      }
     </style>
     """,
     unsafe_allow_html=True,
