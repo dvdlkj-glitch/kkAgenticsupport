@@ -820,5 +820,21 @@
   html{scrollbar-width:none; -ms-overflow-style:none;}
   html::-webkit-scrollbar, body::-webkit-scrollbar{width:0; height:0; display:none;}
 </style>
+
+<script>
+  /* Keep in-page nav anchors (#how, #agents, #demo, …) INSIDE this iframe.
+     Default hash navigation on a srcdoc iframe reloads the embedded component,
+     which makes the Streamlit section below re-render and appear duplicated
+     until a manual refresh. Intercepting the click and smooth-scrolling fixes it. */
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest('a[href^="#"]');
+    if (!a) return;
+    e.preventDefault();
+    var id = a.getAttribute("href").slice(1);
+    var el = id ? document.getElementById(id) : null;
+    if (el) { el.scrollIntoView({ behavior: "smooth", block: "start" }); }
+    else { window.scrollTo({ top: 0, behavior: "smooth" }); }
+  }, true);
+</script>
 </body>
 </html>
