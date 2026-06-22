@@ -1,1 +1,13 @@
+# Streamlit theme — makes the whole app dark so widgets (file uploader,
+# expander, buttons, captions) match the dark intro page instead of rendering
+# on a white background with invisible dark text.
+#
+# Streamlit Community Cloud reads this file automatically.
 
+[theme]
+base = "dark"
+primaryColor = "#8b83ff"            # accent (buttons, focus) — matches the page
+backgroundColor = "#08090c"          # main page background (same as intro CSS)
+secondaryBackgroundColor = "#16171c" # widget surfaces: uploader, expander, chat input
+textColor = "#e9e9ee"                # light text on the dark background
+font = "sans serif"
