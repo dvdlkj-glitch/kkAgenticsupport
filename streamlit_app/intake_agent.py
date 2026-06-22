@@ -4,7 +4,7 @@ Drives the conversation defined in ``customer_support_script.txt``:
   * greet and collect Full Name, Company, Project Name, Project Code
   * guide the user through their issue, invite a screenshot/log upload,
     gate uploads behind a corporate email, give the resolution-timeline notice
-  * detect STL trainers/members and switch to the STL branch
+  * detect SLT Academy Trainers/members and switch to the SLT Academy branch
     (Full Name + the project to build, plus a 'client request.txt' upload)
 
 It talks to OpenRouter through ``core.openrouter.chat`` (the shared LLM client),
@@ -39,8 +39,8 @@ WELCOME = (
     "2. Your **Company Name**\n"
     "3. The **Project Name**\n"
     "4. Your **Designated Project Code**\n\n"
-    "If you're an **STL trainer or member**, just say so — I'll switch to the STL "
-    "request flow instead.\n\n"
+    "If you're an **SLT Academy Trainer or member**, just say so — I'll switch to the "
+    "SLT Academy request flow instead.\n\n"
     "Type your reply below to begin."
 )
 
@@ -61,9 +61,10 @@ def _system_prompt() -> str:
         "behaviors, steps). Invite them to attach a screenshot or .txt/.log file using "
         "the attachment panel shown below the chat, and ask for their corporate email "
         "before they upload. After an upload, give the resolution-timeline notice.\n"
-        "2. STL trainers/members: if the user says they are from STL / an STL trainer or "
-        "member, switch to the STL branch — collect their Full Name and the Name of the "
-        "project they want to build for their client, and ask them to upload the client's "
+        "2. SLT Academy Trainers/members: if the user says they are from SLT Academy / an "
+        "SLT Academy Trainer or member, switch to the SLT Academy branch — collect their "
+        "Full Name and the Name of the project they want to build for their client, and "
+        "ask them to upload the client's "
         "requirement specification file named exactly 'client request.txt' via the "
         "attachment panel.\n"
         "3. When you have the required details, tell the user their details are ready to "
@@ -88,8 +89,9 @@ _EXTRACT_SYSTEM = (
     '{"full_name": "", "company": "", "project_name": "", "project_code": "", '
     '"email": "", "issue": "", "is_stl": false, "stl_project": ""}\n'
     "Rules: use an empty string for anything not yet provided. Set is_stl to true ONLY "
-    "if the user states they are from STL / an STL trainer or member. For STL users, "
-    "stl_project is the project they want to build for their client. Do not guess."
+    "if the user states they are from SLT Academy / an SLT Academy Trainer or member. "
+    "For SLT Academy users, stl_project is the project they want to build for their "
+    "client. Do not guess."
 )
 
 
@@ -149,9 +151,9 @@ def _safe_component(value: str, fallback: str) -> str:
 
 
 def record_filename(fields: dict) -> str:
-    """STL -> 'STL member request.txt'; otherwise '<name> and <project>.txt'."""
+    """SLT Academy -> 'SLT Academy member request.txt'; otherwise '<name> and <project>.txt'."""
     if fields.get("is_stl"):
-        return "STL member request.txt"
+        return "SLT Academy member request.txt"
     name = _safe_component(fields.get("full_name"), "user")
     project = _safe_component(fields.get("project_name"), "project")
     return f"{name} and {project}.txt"
@@ -168,7 +170,7 @@ def build_record(fields: dict, when: str) -> str:
     ]
     if fields.get("is_stl"):
         lines += [
-            "Request type: STL TRAINER / MEMBER",
+            "Request type: SLT ACADEMY TRAINER / MEMBER",
             f"Full Name: {fields.get('full_name', '')}",
             f"Project to build for client: {fields.get('stl_project', '')}",
             "Client requirement file expected: client request.txt (uploaded separately)",

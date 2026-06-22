@@ -29,8 +29,8 @@ Streamlit).
      - Project Name
      - Unique Project Code
 
-3. Special Instructions for STL Trainers
-   * Policy: Detect or provide a pathway for users who identify as trainers from STL.
+3. Special Instructions for SLT Academy Trainers
+   * Policy: Detect or provide a pathway for users who identify as SLT Academy Trainers.
    * Protocol: Require them to provide their full name, and explicitly instruct 
      them to upload the provided text file containing the developmental roadmap 
      or specifications of the project their client wishes to build.
@@ -94,11 +94,11 @@ automated pipelines and engineers to fully parse the logs, isolate the issue,
 and get back to you with an actionable solution. Thank you for your patience."
 
 
-[SEGMENT F: SPECIALIZED FLOW FOR STL TRAINERS & MEMBERS]
+[SEGMENT F: SPECIALIZED FLOW FOR SLT ACADEMY TRAINERS & MEMBERS]
 --------------------------------------------------------------------------------
-Trigger: When the user indicates they are an STL member or trainer.
+Trigger: When the user indicates they are an SLT Academy Trainer or member.
 
-"Welcome, STL Team Member. To process your client's development request efficiently, 
+"Welcome, SLT Academy Trainer. To process your client's development request efficiently,
 please reply with:
 1. Your Full Name:
 2. The Name of the Project you wish to build for your client:

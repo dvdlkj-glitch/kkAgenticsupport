@@ -151,7 +151,7 @@ with st.expander("📋 Details collected so far", expanded=complete):
     if fields:
         if fields.get("is_stl"):
             st.markdown(
-                f"- **STL member** ✓\n- **Full Name:** {fields.get('full_name') or '—'}\n"
+                f"- **SLT Academy member** ✓\n- **Full Name:** {fields.get('full_name') or '—'}\n"
                 f"- **Project to build:** {fields.get('stl_project') or '—'}"
             )
         else:
@@ -189,7 +189,7 @@ with st.expander("📋 Details collected so far", expanded=complete):
 # --- diagnostic / client-spec attachment ---
 st.markdown("#### 📎 Attach a screenshot or log file")
 if fields.get("is_stl"):
-    st.caption("STL members: upload your client's spec file named exactly **client request.txt**.")
+    st.caption("SLT Academy members: upload your client's spec file named exactly **client request.txt**.")
 with st.form("attach_form", clear_on_submit=True):
     uploaded = st.file_uploader(
         "Screenshot or .txt/.log file",
