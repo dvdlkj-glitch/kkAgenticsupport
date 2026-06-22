@@ -40,20 +40,24 @@ def _load_secrets_into_env() -> None:
       GDRIVE_UPLOAD_FOLDER_ID, GOOGLE_SERVICE_ACCOUNT_JSON,
       or a [gcp_service_account] TOML table (the key file's fields).
     """
+    # Accessing st.secrets (membership tests included) raises
+    # StreamlitSecretNotFoundError when no secrets.toml exists — e.g. running
+    # locally. Every key here is optional, so wrap the whole body and bail out
+    # quietly if secrets aren't configured.
     try:
         secrets = st.secrets
+
+        for k in ("OPENROUTER_API_KEY", "ROUTER_MODEL", "ANSWER_MODEL", "GDRIVE_UPLOAD_FOLDER_ID"):
+            if k in secrets and not os.environ.get(k):
+                os.environ[k] = str(secrets[k])
+
+        if not os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON"):
+            if "gcp_service_account" in secrets:
+                os.environ["GOOGLE_SERVICE_ACCOUNT_JSON"] = json.dumps(dict(secrets["gcp_service_account"]))
+            elif "GOOGLE_SERVICE_ACCOUNT_JSON" in secrets:
+                os.environ["GOOGLE_SERVICE_ACCOUNT_JSON"] = str(secrets["GOOGLE_SERVICE_ACCOUNT_JSON"])
     except Exception:
         return
-
-    for k in ("OPENROUTER_API_KEY", "ROUTER_MODEL", "ANSWER_MODEL", "GDRIVE_UPLOAD_FOLDER_ID"):
-        if k in secrets and not os.environ.get(k):
-            os.environ[k] = str(secrets[k])
-
-    if not os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON"):
-        if "gcp_service_account" in secrets:
-            os.environ["GOOGLE_SERVICE_ACCOUNT_JSON"] = json.dumps(dict(secrets["gcp_service_account"]))
-        elif "GOOGLE_SERVICE_ACCOUNT_JSON" in secrets:
-            os.environ["GOOGLE_SERVICE_ACCOUNT_JSON"] = str(secrets["GOOGLE_SERVICE_ACCOUNT_JSON"])
 
 
 _load_secrets_into_env()
@@ -71,66 +75,109 @@ st.set_page_config(page_title="kkAgentic Support — Introduction", layout="wide
 st.markdown(
     """
     <style>
+      /* ===== kkAgentic — premium dark SaaS, matches the marketing hero ===== */
+      :root{
+        --kk-bg:#090a0f; --kk-surface:#0e1016; --kk-surface-2:#161922; --kk-surface-3:#1f232e;
+        --kk-ink:#edeef3; --kk-muted:#9298a4; --kk-faint:#606673;
+        --kk-hair:rgba(255,255,255,.095); --kk-line:rgba(255,255,255,.055);
+        --kk-accent:#7f78ff; --kk-accent-press:#6a61f5;
+        --kk-accent-soft:rgba(127,120,255,.16); --kk-accent-line:rgba(127,120,255,.46);
+        --kk-glass:rgba(20,23,31,.66);
+      }
       header[data-testid="stHeader"]{display:none}
-      [data-testid="stAppViewContainer"]{background:#ffffff}
       footer{display:none}
-      .block-container{padding:0 !important; max-width:1040px !important; margin:0 auto !important}
       [data-testid="stAppViewContainer"]{
-        font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
+        background:
+          radial-gradient(60% 36% at 50% 0%, rgba(127,120,255,.10), transparent 70%),
+          radial-gradient(42% 30% at 92% 4%, rgba(50,213,131,.05), transparent 72%),
+          var(--kk-bg);
+        color:var(--kk-ink);
+        font-family:"Inter",-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif}
+      .block-container{padding:0 !important; max-width:1040px !important; margin:0 auto !important}
       /* never override icon webfonts (was breaking the chat avatar -> "smart_toy") */
       [data-testid="stIconMaterial"], span[class*="material-symbols"], .material-icons{
         font-family:'Material Symbols Rounded','Material Symbols Outlined','Material Icons' !important}
 
+      /* base text + links */
+      [data-testid="stMarkdownContainer"]{color:var(--kk-ink)}
+      [data-testid="stAppViewContainer"] a{color:var(--kk-accent)}
+
       /* brand lockup — matches the marketing header */
-      .kk-panel{max-width:680px;margin:0 auto;padding:0 16px;color:#1d1d1f}
+      .kk-panel{max-width:680px;margin:0 auto;padding:0 16px;color:var(--kk-ink)}
       .kk-brand{display:flex;align-items:center;gap:12px;margin:30px 0 8px}
-      .kk-logo{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;
-        justify-content:center;background:linear-gradient(135deg,#0071e3,#5e5ce6);color:#fff;
-        font-weight:800;letter-spacing:.4px;font-size:15px;box-shadow:0 4px 14px rgba(0,113,227,.30)}
-      .kk-title{font-size:22px;font-weight:700;letter-spacing:-0.02em;color:#1d1d1f}
-      .kk-title .dim{color:#6e6e73;font-weight:500}
-      .kk-sub{color:#6e6e73;font-size:14.5px;margin:0 0 6px}
+      .kk-logo{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;
+        justify-content:center;background:linear-gradient(155deg,#8c84ff,var(--kk-accent-press));color:#fff;
+        font-weight:800;letter-spacing:.4px;font-size:15px;
+        box-shadow:0 8px 22px -8px var(--kk-accent),inset 0 1px 0 rgba(255,255,255,.25)}
+      .kk-title{font-size:22px;font-weight:700;letter-spacing:-0.02em;color:var(--kk-ink)}
+      .kk-title .dim{color:var(--kk-muted);font-weight:500}
+      .kk-sub{color:var(--kk-muted);font-size:14.5px;margin:0 0 6px}
 
-      /* chat bubbles — clean Apple cards, centered column */
-      [data-testid="stChatMessage"]{background:#ffffff;border:0.5px solid rgba(0,0,0,.10);
+      /* chat bubbles — dark glass cards, centered column */
+      [data-testid="stChatMessage"]{background:var(--kk-glass);backdrop-filter:blur(14px) saturate(150%);
+        -webkit-backdrop-filter:blur(14px) saturate(150%);border:1px solid var(--kk-hair);
         border-radius:16px;padding:12px 16px;margin:8px auto;max-width:680px;
-        box-shadow:0 1px 2px rgba(0,0,0,.05)}
-      [data-testid="stChatMessage"] *{color:#1d1d1f}
-      [data-testid="stChatInput"]{max-width:680px;margin:0 auto;background:#ffffff;
-        border:0.5px solid rgba(0,0,0,.14);border-radius:14px}
+        box-shadow:0 14px 34px -22px rgba(0,0,0,.7)}
+      [data-testid="stChatMessage"] [data-testid="stMarkdownContainer"],
+      [data-testid="stChatMessage"] p, [data-testid="stChatMessage"] li{color:var(--kk-ink)}
+      [data-testid="stChatMessage"] strong{color:#fff}
+      [data-testid="stChatMessage"] code{background:var(--kk-surface-3);color:#c8c2ff;
+        border-radius:6px;padding:1px 5px}
 
-      /* expander + form as light cards */
-      [data-testid="stExpander"]{max-width:680px;margin:10px auto;border:0.5px solid rgba(0,0,0,.10);
-        border-radius:14px;background:#ffffff;overflow:hidden}
-      [data-testid="stExpander"] summary{font-weight:600;color:#1d1d1f}
-      [data-testid="stForm"]{max-width:680px;margin:0 auto;border:0.5px solid rgba(0,0,0,.10);
-        border-radius:14px;background:#ffffff}
+      /* chat input — dark field with violet focus ring */
+      [data-testid="stChatInput"]{max-width:680px;margin:0 auto;background:var(--kk-surface-2);
+        border:1px solid var(--kk-hair);border-radius:14px}
+      [data-testid="stChatInput"]:focus-within{border-color:var(--kk-accent-line);
+        box-shadow:0 0 0 3px var(--kk-accent-soft)}
+      [data-testid="stChatInput"] textarea{color:var(--kk-ink) !important}
+      [data-testid="stChatInput"] textarea::placeholder{color:var(--kk-faint)}
 
-      /* Apple-blue pill buttons */
-      .stButton button, [data-testid="stFormSubmitButton"] button{border-radius:980px;font-weight:600}
+      /* expander + form as dark glass cards */
+      [data-testid="stExpander"]{max-width:680px;margin:10px auto;border:1px solid var(--kk-hair);
+        border-radius:14px;background:var(--kk-glass);backdrop-filter:blur(14px) saturate(150%);
+        -webkit-backdrop-filter:blur(14px) saturate(150%);overflow:hidden}
+      [data-testid="stExpander"] summary{font-weight:600;color:var(--kk-ink)}
+      [data-testid="stExpander"] summary:hover{color:var(--kk-accent)}
+      [data-testid="stExpander"] [data-testid="stMarkdownContainer"]{color:var(--kk-ink)}
+      [data-testid="stForm"]{max-width:680px;margin:0 auto;border:1px solid var(--kk-hair);
+        border-radius:14px;background:var(--kk-glass);backdrop-filter:blur(14px) saturate(150%);
+        -webkit-backdrop-filter:blur(14px) saturate(150%)}
 
-      /* Apple-light file-uploader dropzone */
-      [data-testid="stFileUploaderDropzone"]{background:#f5f5f7 !important;
-        border:1px dashed #c7c7cc !important;border-radius:14px}
-      [data-testid="stFileUploaderDropzone"] *{color:#1d1d1f !important}
+      /* violet gradient pill buttons */
+      .stButton button, [data-testid="stFormSubmitButton"] button{border-radius:980px;font-weight:650;
+        border:1px solid var(--kk-hair);background:var(--kk-surface-2);color:var(--kk-ink);transition:.16s ease}
+      .stButton button:hover, [data-testid="stFormSubmitButton"] button:hover{
+        border-color:var(--kk-accent-line);background:var(--kk-surface-3)}
+      .stButton button[kind="primary"], [data-testid="stFormSubmitButton"] button[kind="primary"]{
+        background:linear-gradient(155deg,#8c84ff,var(--kk-accent-press));color:#fff;border-color:transparent;
+        box-shadow:0 10px 26px -10px var(--kk-accent),inset 0 1px 0 rgba(255,255,255,.22)}
+      .stButton button[kind="primary"]:hover, [data-testid="stFormSubmitButton"] button[kind="primary"]:hover{
+        box-shadow:0 14px 32px -10px var(--kk-accent),inset 0 1px 0 rgba(255,255,255,.28)}
+
+      /* dark file-uploader dropzone */
+      [data-testid="stFileUploaderDropzone"]{background:var(--kk-surface-2) !important;
+        border:1px dashed var(--kk-hair) !important;border-radius:14px}
+      [data-testid="stFileUploaderDropzone"]:hover{border-color:var(--kk-accent-line) !important}
+      [data-testid="stFileUploaderDropzone"] *{color:var(--kk-ink) !important}
+      [data-testid="stFileUploaderDropzone"] small{color:var(--kk-muted) !important}
 
       /* center captions/markdown text in the panel column */
-      [data-testid="stCaptionContainer"]{max-width:680px;margin:0 auto}
+      [data-testid="stCaptionContainer"]{max-width:680px;margin:0 auto;color:var(--kk-muted)}
 
-      /* ---- guiding animations (subtle, Apple-restrained) ---- */
+      /* ---- guiding animations (subtle) ---- */
       @keyframes kkFade{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
-      @keyframes kkGlow{0%,100%{box-shadow:0 4px 14px rgba(0,113,227,.30)}
-                        50%{box-shadow:0 7px 22px rgba(0,113,227,.55)}}
+      @keyframes kkGlow{0%,100%{box-shadow:0 8px 22px -8px var(--kk-accent),inset 0 1px 0 rgba(255,255,255,.25)}
+                        50%{box-shadow:0 12px 30px -8px var(--kk-accent),inset 0 1px 0 rgba(255,255,255,.3)}}
       @keyframes kkBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
       @keyframes kkPulse{0%,100%{opacity:.35;transform:scale(.8)}50%{opacity:1;transform:scale(1.15)}}
       .kk-brand,.kk-sub{animation:kkFade .5s ease both}
       .kk-logo{animation:kkGlow 2.8s ease-in-out infinite}
       [data-testid="stChatMessage"]{animation:kkFade .45s ease both}
       .kk-hint{display:inline-flex;align-items:center;gap:9px;margin:10px 0 2px;padding:8px 15px;
-        border-radius:980px;background:rgba(0,113,227,.10);color:#0071e3;font-size:13px;font-weight:600;
-        animation:kkFade .6s ease both}
-      .kk-hint .dot{width:8px;height:8px;border-radius:50%;background:#0071e3;
-        animation:kkPulse 1.4s ease-in-out infinite}
+        border-radius:980px;background:var(--kk-accent-soft);color:#b9b3ff;font-size:13px;font-weight:600;
+        border:1px solid var(--kk-accent-line);animation:kkFade .6s ease both}
+      .kk-hint .dot{width:8px;height:8px;border-radius:50%;background:var(--kk-accent);
+        box-shadow:0 0 10px 0 var(--kk-accent);animation:kkPulse 1.4s ease-in-out infinite}
       .kk-hint .arrow{display:inline-block;animation:kkBounce 1.4s ease-in-out infinite}
     </style>
     """,
