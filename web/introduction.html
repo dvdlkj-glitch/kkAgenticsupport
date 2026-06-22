@@ -815,6 +815,10 @@
   @keyframes kkArrow{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
   .hero .cta, a.cta{position:relative;}
   .scroll-cue{animation:kkArrow 1.5s ease-in-out infinite;}
+
+  /* hide the iframe's own scrollbar (wheel / trackpad still scroll) */
+  html{scrollbar-width:none; -ms-overflow-style:none;}
+  html::-webkit-scrollbar, body::-webkit-scrollbar{width:0; height:0; display:none;}
 </style>
 </body>
 </html>
