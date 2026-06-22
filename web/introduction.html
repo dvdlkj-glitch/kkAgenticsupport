@@ -817,6 +817,21 @@
   }
   nav .name{font-weight:700; letter-spacing:-0.015em; color:var(--ink);}
   nav .name .dim{color:var(--muted); font-weight:500;}
+  /* light, frosted nav bar (was dark) */
+  nav{background:rgba(255,255,255,.80) !important;
+      border-bottom:1px solid rgba(0,0,0,.08) !important;
+      -webkit-backdrop-filter:saturate(160%) blur(18px);
+      backdrop-filter:saturate(160%) blur(18px);}
+  nav .links a{color:var(--muted) !important;}
+  nav .links a:hover{color:var(--ink) !important;}
+
+  /* gentle guiding animations */
+  @keyframes kkGlow{0%,100%{box-shadow:0 3px 12px rgba(0,113,227,.30)}
+                    50%{box-shadow:0 6px 20px rgba(0,113,227,.55)}}
+  nav .logo{animation:kkGlow 2.8s ease-in-out infinite;}
+  @keyframes kkArrow{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+  .hero .cta, a.cta{position:relative;}
+  .scroll-cue{animation:kkArrow 1.5s ease-in-out infinite;}
 </style>
 </body>
 </html>
