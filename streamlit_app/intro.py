@@ -79,6 +79,10 @@ st.markdown(
                 font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif}
       .kk-panel h2{letter-spacing:-0.02em;margin:34px 0 2px}
       .kk-panel p.sub{color:#9a9aa6;font-size:14px;margin-top:0}
+      /* keep the file-uploader dropzone dark (no white bar) on any theme */
+      [data-testid="stFileUploaderDropzone"]{background:#16171c !important;
+                border:1px dashed #3a3a44 !important}
+      [data-testid="stFileUploaderDropzone"] *{color:#e9e9ee !important}
     </style>
     """,
     unsafe_allow_html=True,
