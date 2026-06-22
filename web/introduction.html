@@ -321,8 +321,8 @@
 
 <nav>
   <div class="wrap">
-    <span class="logo">k</span>
-    <span class="name">kkAgentic <span class="dim">Support</span></span>
+    <span class="logo">DL</span>
+    <span class="name">David Lau <span class="dim">· KK Agentic Support</span></span>
     <span class="links">
       <a href="#how" class="hide">How it works</a>
       <a href="#agents" class="hide">The agents</a>
@@ -505,7 +505,7 @@
 
 <footer>
   <div class="wrap">
-    <div>kkAgentic Support · Router + Project agents · Supabase pgvector · uploads to Google Drive</div>
+    <div>David Lau · KK Agentic Support · Router + Project agents · Supabase pgvector · uploads to Google Drive</div>
     <div>An introduction page — the working modules come next.</div>
   </div>
 </footer>
@@ -784,5 +784,54 @@
   /* ===== boot ===== */
   showWelcome();
 </script>
+
+<!-- ============================================================ -->
+<!--  Apple-style LIGHT theme override (commercial / professional)  -->
+<!--  Remaps the :root palette so the whole page goes light without -->
+<!--  editing the minified stylesheet. Placed last so it wins.      -->
+<!-- ============================================================ -->
+<style id="apple-light-theme">
+  :root{
+    --bg:#fbfbfd; --grid:rgba(0,0,0,.035);
+    --surface:#ffffff; --surface-2:#f5f5f7; --surface-3:#ececf0;
+    --ink:#1d1d1f; --muted:#6e6e73; --faint:#86868b;
+    --hair:rgba(0,0,0,.10); --line:rgba(0,0,0,.065);
+    --accent:#0071e3; --accent-press:#0077ed; --accent-ink:#ffffff;
+    --accent-soft:rgba(0,113,227,.10); --accent-line:rgba(0,113,227,.35);
+    --g2:#34c759; --g2-soft:rgba(52,199,89,.12); --g2-line:rgba(52,199,89,.40);
+    --store:#5e5ce6; --store-soft:rgba(94,92,230,.12);
+    --ok:#30b454; --bad:#ff3b30;
+    --glass:rgba(255,255,255,.72);
+    --bg-img:none;
+  }
+  html,body{background:var(--bg) !important; color:var(--ink);}
+  /* soften the grid/wallpaper layers for the light look */
+  body::before, body::after{opacity:.5 !important;}
+
+  /* ---- Commercial brand lockup ---- */
+  nav .logo{
+    background:linear-gradient(135deg,#0071e3 0%,#5e5ce6 100%) !important;
+    color:#fff !important; font-weight:800; font-size:12.5px; letter-spacing:.4px;
+    display:inline-flex; align-items:center; justify-content:center;
+    border-radius:9px; box-shadow:0 3px 12px rgba(0,113,227,.32);
+  }
+  nav .name{font-weight:700; letter-spacing:-0.015em; color:var(--ink);}
+  nav .name .dim{color:var(--muted); font-weight:500;}
+  /* light, frosted nav bar (was dark) */
+  nav{background:rgba(255,255,255,.80) !important;
+      border-bottom:1px solid rgba(0,0,0,.08) !important;
+      -webkit-backdrop-filter:saturate(160%) blur(18px);
+      backdrop-filter:saturate(160%) blur(18px);}
+  nav .links a{color:var(--muted) !important;}
+  nav .links a:hover{color:var(--ink) !important;}
+
+  /* gentle guiding animations */
+  @keyframes kkGlow{0%,100%{box-shadow:0 3px 12px rgba(0,113,227,.30)}
+                    50%{box-shadow:0 6px 20px rgba(0,113,227,.55)}}
+  nav .logo{animation:kkGlow 2.8s ease-in-out infinite;}
+  @keyframes kkArrow{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+  .hero .cta, a.cta{position:relative;}
+  .scroll-cue{animation:kkArrow 1.5s ease-in-out infinite;}
+</style>
 </body>
 </html>
