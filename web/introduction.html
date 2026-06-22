@@ -816,6 +816,19 @@
   .hero .cta, a.cta{position:relative;}
   .scroll-cue{animation:kkArrow 1.5s ease-in-out infinite;}
 
+  /* ---- mobile phones (≤560px) ---- */
+  @media (max-width:560px){
+    html,body{overflow-x:hidden;}
+    .wrap{padding:0 16px;}
+    section.block{padding:42px 0;}
+    .hero{padding:46px 0 32px;}
+    .hero .cta{flex-direction:column; align-items:stretch; gap:10px;}
+    .hero .cta > *{width:100%; text-align:center;}
+    nav .wrap{height:50px;}
+    nav .name{font-size:13.5px;}
+    nav a.cta{padding:8px 12px;}
+  }
+
   /* hide the iframe's own scrollbar (wheel / trackpad still scroll) */
   html{scrollbar-width:none; -ms-overflow-style:none;}
   html::-webkit-scrollbar, body::-webkit-scrollbar{width:0; height:0; display:none;}
