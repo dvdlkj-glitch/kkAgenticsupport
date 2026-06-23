@@ -343,6 +343,11 @@ footer .links a:hover{color:var(--ink)}
     <div class="pc-right">
       <div class="scan"></div>
       <div class="pc-tag">Two-agent support engine</div>
+      <div class="pc-hero">
+        <span class="pc-hero-eyebrow">The principle</span>
+        <h2 class="pc-hero-title">Every project gets its<br><span class="hl">own AI support agent</span></h2>
+        <span class="pc-hero-rule"></span>
+      </div>
       <nav class="rnav">
         <div class="col">
           <a href="#how">Flow</a>
@@ -636,5 +641,28 @@ footer .links a:hover{color:var(--ink)}
   }
 })();
 </script>
+<style id="pc-hero-style">
+  /* centered artistic title on the machined-metal right panel */
+  .pc-right .pc-hero{position:absolute; z-index:3; left:0; right:0; top:50%;
+    transform:translateY(-50%); text-align:center; padding:0 7%; pointer-events:none;}
+  .pc-right .pc-hero::before{content:""; position:absolute; inset:-45% -15%; z-index:-1;
+    background:radial-gradient(58% 56% at 50% 50%, rgba(6,8,12,.52), transparent 72%);}
+  .pc-hero-eyebrow{display:block; font:600 11px/1 var(--font);
+    letter-spacing:.34em; text-transform:uppercase; color:rgba(255,255,255,.58); margin-bottom:16px;}
+  .pc-hero-title{margin:0; font-weight:300; line-height:1.08; letter-spacing:-.018em;
+    font-size:clamp(25px,3.3vw,44px); color:rgba(255,255,255,.92);
+    text-shadow:0 2px 16px rgba(0,0,0,.5);}
+  .pc-hero-title .hl{display:inline-block; margin-top:.14em; font-weight:800; letter-spacing:-.03em;
+    background:linear-gradient(180deg,#ffffff,#cbcfd5 58%,#a9afb7);
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+    filter:drop-shadow(0 3px 12px rgba(0,0,0,.55));}
+  .pc-hero-rule{display:block; width:56px; height:2px; margin:20px auto 0;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.8),transparent);}
+  @media (max-width:560px){
+    .pc-right .pc-hero{padding:0 12%}
+    .pc-hero-title{font-size:21px}
+    .pc-hero-eyebrow{font-size:10px; letter-spacing:.28em; margin-bottom:10px}
+  }
+</style>
 </body>
 </html>
