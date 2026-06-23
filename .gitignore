@@ -15,3 +15,15 @@ venv/
 # OS
 .DS_Store
 Thumbs.db
+
+# Design scratch / local-only (not needed to run the app online)
+*.mp4
+# screenshots captured in the repo root (web/*.png stay tracked)
+/*.png
+.streamlit_run.log
+_designframes/
+_v/
+_verify/
+
+# Secrets (never commit) — set these in the Streamlit Cloud "Secrets" UI instead
+.streamlit/secrets.toml

@@ -40,20 +40,24 @@ def _load_secrets_into_env() -> None:
       GDRIVE_UPLOAD_FOLDER_ID, GOOGLE_SERVICE_ACCOUNT_JSON,
       or a [gcp_service_account] TOML table (the key file's fields).
     """
+    # Accessing st.secrets (membership tests included) raises
+    # StreamlitSecretNotFoundError when no secrets.toml exists — e.g. running
+    # locally. Every key here is optional, so wrap the whole body and bail out
+    # quietly if secrets aren't configured.
     try:
         secrets = st.secrets
+
+        for k in ("OPENROUTER_API_KEY", "ROUTER_MODEL", "ANSWER_MODEL", "GDRIVE_UPLOAD_FOLDER_ID"):
+            if k in secrets and not os.environ.get(k):
+                os.environ[k] = str(secrets[k])
+
+        if not os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON"):
+            if "gcp_service_account" in secrets:
+                os.environ["GOOGLE_SERVICE_ACCOUNT_JSON"] = json.dumps(dict(secrets["gcp_service_account"]))
+            elif "GOOGLE_SERVICE_ACCOUNT_JSON" in secrets:
+                os.environ["GOOGLE_SERVICE_ACCOUNT_JSON"] = str(secrets["GOOGLE_SERVICE_ACCOUNT_JSON"])
     except Exception:
         return
-
-    for k in ("OPENROUTER_API_KEY", "ROUTER_MODEL", "ANSWER_MODEL", "GDRIVE_UPLOAD_FOLDER_ID"):
-        if k in secrets and not os.environ.get(k):
-            os.environ[k] = str(secrets[k])
-
-    if not os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON"):
-        if "gcp_service_account" in secrets:
-            os.environ["GOOGLE_SERVICE_ACCOUNT_JSON"] = json.dumps(dict(secrets["gcp_service_account"]))
-        elif "GOOGLE_SERVICE_ACCOUNT_JSON" in secrets:
-            os.environ["GOOGLE_SERVICE_ACCOUNT_JSON"] = str(secrets["GOOGLE_SERVICE_ACCOUNT_JSON"])
 
 
 _load_secrets_into_env()
@@ -71,67 +75,154 @@ st.set_page_config(page_title="kkAgentic Support — Introduction", layout="wide
 st.markdown(
     """
     <style>
+      /* ===== kkAgentic — monochrome brushed-metal theme (matches the marketing hero) ===== */
+      :root{
+        --kk-ink:#16181c; --kk-ink-2:#2a2d33; --kk-muted:#5b616a; --kk-faint:#9298a0;
+        --kk-hair:rgba(20,22,26,.12); --kk-hair-soft:rgba(20,22,26,.07);
+        --kk-glass:rgba(255,255,255,.58); --kk-glass-2:rgba(255,255,255,.4);
+        --kk-glass-brd:rgba(255,255,255,.78); --kk-steel:#3a3f47;
+        --kk-shadow:0 22px 54px -32px rgba(18,20,24,.5);
+      }
       header[data-testid="stHeader"]{display:none}
-      [data-testid="stAppViewContainer"]{background:#ffffff}
       footer{display:none}
-      .block-container{padding:0 !important; max-width:1040px !important; margin:0 auto !important}
       [data-testid="stAppViewContainer"]{
-        font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
+        background:
+          radial-gradient(130% 90% at 12% -6%, #f4f5f6 0%, rgba(244,245,246,0) 55%),
+          radial-gradient(120% 80% at 108% 14%, #cfd3d7 0%, rgba(207,211,215,0) 52%),
+          radial-gradient(90% 70% at 50% 116%, #c9ced3 0%, rgba(201,206,211,0) 60%),
+          linear-gradient(146deg, #e9ebed 0%, #d4d8db 38%, #e6e8ea 64%, #d0d4d8 100%);
+        background-attachment:fixed;
+        color:var(--kk-ink);
+        font-family:"Inter",-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif}
+      .block-container{padding:0 !important; max-width:1120px !important; margin:0 auto !important}
+      /* clean, app-like look: hide page + iframe scrollbars (wheel still scrolls) */
+      ::-webkit-scrollbar{width:0 !important; height:0 !important; background:transparent}
+      html, body, [data-testid="stAppViewContainer"], [data-testid="stMain"]{
+        scrollbar-width:none; -ms-overflow-style:none;}
+      iframe{border:0 !important}
       /* never override icon webfonts (was breaking the chat avatar -> "smart_toy") */
       [data-testid="stIconMaterial"], span[class*="material-symbols"], .material-icons{
         font-family:'Material Symbols Rounded','Material Symbols Outlined','Material Icons' !important}
 
+      /* base text + links */
+      [data-testid="stMarkdownContainer"]{color:var(--kk-ink)}
+      [data-testid="stAppViewContainer"] a{color:var(--kk-ink); text-decoration:underline;
+        text-decoration-color:var(--kk-steel); text-underline-offset:2px}
+
       /* brand lockup — matches the marketing header */
-      .kk-panel{max-width:680px;margin:0 auto;padding:0 16px;color:#1d1d1f}
-      .kk-brand{display:flex;align-items:center;gap:12px;margin:30px 0 8px}
+      .kk-panel{max-width:720px;margin:0 auto;padding:0 16px;color:var(--kk-ink)}
+      .kk-brand{display:flex;align-items:center;gap:12px;margin:34px 0 10px}
       .kk-logo{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;
-        justify-content:center;background:linear-gradient(135deg,#0071e3,#5e5ce6);color:#fff;
-        font-weight:800;letter-spacing:.4px;font-size:15px;box-shadow:0 4px 14px rgba(0,113,227,.30)}
-      .kk-title{font-size:22px;font-weight:700;letter-spacing:-0.02em;color:#1d1d1f}
-      .kk-title .dim{color:#6e6e73;font-weight:500}
-      .kk-sub{color:#6e6e73;font-size:14.5px;margin:0 0 6px}
+        justify-content:center;background:linear-gradient(150deg,#2c2f34,#0f1013);color:#eef0f2;
+        font-weight:700;letter-spacing:-.02em;font-size:15px;
+        box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 8px 20px -10px rgba(0,0,0,.6)}
+      .kk-title{font-size:21px;font-weight:600;letter-spacing:-0.02em;color:var(--kk-ink)}
+      .kk-title .reg{font-size:.55em;vertical-align:super;color:var(--kk-faint)}
+      .kk-title .dim{color:var(--kk-muted);font-weight:500}
+      .kk-eyebrow{font-size:11px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;
+        color:var(--kk-faint);display:block;margin:0 0 6px}
+      .kk-sub{color:var(--kk-muted);font-size:14.5px;line-height:1.6;margin:0 0 6px}
 
-      /* chat bubbles — clean Apple cards, centered column */
-      [data-testid="stChatMessage"]{background:#ffffff;border:0.5px solid rgba(0,0,0,.10);
-        border-radius:16px;padding:12px 16px;margin:8px auto;max-width:680px;
-        box-shadow:0 1px 2px rgba(0,0,0,.05)}
-      [data-testid="stChatMessage"] *{color:#1d1d1f}
-      [data-testid="stChatInput"]{max-width:680px;margin:0 auto;background:#ffffff;
-        border:0.5px solid rgba(0,0,0,.14);border-radius:14px}
+      /* chat bubbles — frosted glass cards, centered column */
+      [data-testid="stChatMessage"]{background:var(--kk-glass);backdrop-filter:blur(16px) saturate(140%);
+        -webkit-backdrop-filter:blur(16px) saturate(140%);border:1px solid var(--kk-glass-brd);
+        border-radius:16px;padding:12px 16px;margin:8px auto;max-width:720px;box-shadow:var(--kk-shadow)}
+      [data-testid="stChatMessage"] [data-testid="stMarkdownContainer"],
+      [data-testid="stChatMessage"] p, [data-testid="stChatMessage"] li{color:var(--kk-ink)}
+      [data-testid="stChatMessage"] strong{color:#0e1013}
+      [data-testid="stChatMessage"] code{background:rgba(20,22,26,.07);color:var(--kk-ink-2);
+        border-radius:6px;padding:1px 5px}
 
-      /* expander + form as light cards */
-      [data-testid="stExpander"]{max-width:680px;margin:10px auto;border:0.5px solid rgba(0,0,0,.10);
-        border-radius:14px;background:#ffffff;overflow:hidden}
-      [data-testid="stExpander"] summary{font-weight:600;color:#1d1d1f}
-      [data-testid="stForm"]{max-width:680px;margin:0 auto;border:0.5px solid rgba(0,0,0,.10);
-        border-radius:14px;background:#ffffff}
+      /* chat input — frosted field with steel focus ring */
+      [data-testid="stChatInput"]{max-width:720px;margin:0 auto;background:var(--kk-glass);
+        border:1px solid var(--kk-glass-brd);border-radius:14px;backdrop-filter:blur(10px)}
+      [data-testid="stChatInput"]:focus-within{border-color:var(--kk-steel);
+        box-shadow:0 0 0 3px rgba(58,63,71,.14)}
+      [data-testid="stChatInput"] textarea{color:var(--kk-ink) !important}
+      [data-testid="stChatInput"] textarea::placeholder{color:var(--kk-faint)}
 
-      /* Apple-blue pill buttons */
-      .stButton button, [data-testid="stFormSubmitButton"] button{border-radius:980px;font-weight:600}
+      /* expander + form as frosted glass cards */
+      [data-testid="stExpander"]{max-width:720px;margin:10px auto;border:1px solid var(--kk-glass-brd);
+        border-radius:14px;background:var(--kk-glass);backdrop-filter:blur(16px) saturate(140%);
+        -webkit-backdrop-filter:blur(16px) saturate(140%);overflow:hidden;box-shadow:var(--kk-shadow)}
+      [data-testid="stExpander"] summary{font-weight:600;color:var(--kk-ink)}
+      [data-testid="stExpander"] summary:hover{color:var(--kk-steel)}
+      [data-testid="stExpander"] [data-testid="stMarkdownContainer"]{color:var(--kk-ink)}
+      [data-testid="stForm"]{max-width:720px;margin:0 auto;border:1px solid var(--kk-glass-brd);
+        border-radius:14px;background:var(--kk-glass);backdrop-filter:blur(16px) saturate(140%);
+        -webkit-backdrop-filter:blur(16px) saturate(140%);box-shadow:var(--kk-shadow)}
 
-      /* Apple-light file-uploader dropzone */
-      [data-testid="stFileUploaderDropzone"]{background:#f5f5f7 !important;
-        border:1px dashed #c7c7cc !important;border-radius:14px}
-      [data-testid="stFileUploaderDropzone"] *{color:#1d1d1f !important}
+      /* monochrome pill buttons */
+      .stButton button, [data-testid="stFormSubmitButton"] button{border-radius:980px;font-weight:600;
+        border:1px solid var(--kk-glass-brd);background:var(--kk-glass);color:var(--kk-ink);transition:.16s ease}
+      .stButton button:hover, [data-testid="stFormSubmitButton"] button:hover{
+        border-color:var(--kk-steel);background:rgba(255,255,255,.72);transform:translateY(-1px)}
+      /* primary button (e.g. "💾 Save my details to support") — readable light
+         frosted pill matching the file-upload button. Streamlit colours the inner
+         label dark, so on the old black pill it was invisible; force it readable. */
+      .stButton button[kind="primary"], [data-testid="stFormSubmitButton"] button[kind="primary"]{
+        background:var(--kk-glass) !important;color:var(--kk-ink) !important;
+        border:1px solid var(--kk-glass-brd) !important;box-shadow:var(--kk-shadow) !important}
+      .stButton button[kind="primary"]:hover, [data-testid="stFormSubmitButton"] button[kind="primary"]:hover{
+        background:rgba(255,255,255,.8) !important;border-color:var(--kk-steel) !important;transform:translateY(-1px)}
+      .stButton button[kind="primary"] *, [data-testid="stFormSubmitButton"] button[kind="primary"] *{
+        color:var(--kk-ink) !important}
+
+      /* frosted file-uploader dropzone */
+      [data-testid="stFileUploaderDropzone"]{background:var(--kk-glass-2) !important;
+        border:1px dashed var(--kk-hair) !important;border-radius:14px}
+      [data-testid="stFileUploaderDropzone"]:hover{border-color:var(--kk-steel) !important}
+      [data-testid="stFileUploaderDropzone"] *{color:var(--kk-ink) !important}
+      [data-testid="stFileUploaderDropzone"] small{color:var(--kk-muted) !important}
+      /* the "Browse files / Upload" button inside the dropzone — readable frosted pill
+         (was a black button with dark, invisible label until hover) */
+      [data-testid="stFileUploaderDropzone"] button,
+      [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"]{
+        background:var(--kk-glass) !important;border:1px solid var(--kk-glass-brd) !important;
+        border-radius:980px !important;font-weight:600 !important;
+        box-shadow:var(--kk-shadow) !important;transition:.16s ease}
+      [data-testid="stFileUploaderDropzone"] button:hover,
+      [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"]:hover{
+        background:rgba(255,255,255,.8) !important;border-color:var(--kk-steel) !important;
+        transform:translateY(-1px)}
+      [data-testid="stFileUploaderDropzone"] button,
+      [data-testid="stFileUploaderDropzone"] button *{color:var(--kk-ink) !important}
 
       /* center captions/markdown text in the panel column */
-      [data-testid="stCaptionContainer"]{max-width:680px;margin:0 auto}
+      [data-testid="stCaptionContainer"]{max-width:720px;margin:0 auto;color:var(--kk-muted)}
 
-      /* ---- guiding animations (subtle, Apple-restrained) ---- */
+      /* ---- guiding animations (subtle) ---- */
       @keyframes kkFade{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
-      @keyframes kkGlow{0%,100%{box-shadow:0 4px 14px rgba(0,113,227,.30)}
-                        50%{box-shadow:0 7px 22px rgba(0,113,227,.55)}}
+      @keyframes kkGlow{0%,100%{box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 8px 20px -10px rgba(0,0,0,.6)}
+                        50%{box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 12px 26px -10px rgba(0,0,0,.66)}}
       @keyframes kkBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
-      @keyframes kkPulse{0%,100%{opacity:.35;transform:scale(.8)}50%{opacity:1;transform:scale(1.15)}}
+      @keyframes kkPulse{0%,100%{opacity:.4;transform:scale(.8)}50%{opacity:1;transform:scale(1.15)}}
       .kk-brand,.kk-sub{animation:kkFade .5s ease both}
       .kk-logo{animation:kkGlow 2.8s ease-in-out infinite}
       [data-testid="stChatMessage"]{animation:kkFade .45s ease both}
       .kk-hint{display:inline-flex;align-items:center;gap:9px;margin:10px 0 2px;padding:8px 15px;
-        border-radius:980px;background:rgba(0,113,227,.10);color:#0071e3;font-size:13px;font-weight:600;
-        animation:kkFade .6s ease both}
-      .kk-hint .dot{width:8px;height:8px;border-radius:50%;background:#0071e3;
-        animation:kkPulse 1.4s ease-in-out infinite}
+        border-radius:980px;background:var(--kk-glass);color:var(--kk-ink-2);font-size:13px;font-weight:600;
+        border:1px solid var(--kk-glass-brd);box-shadow:var(--kk-shadow);animation:kkFade .6s ease both}
+      .kk-hint .dot{width:8px;height:8px;border-radius:50%;background:var(--kk-steel);
+        box-shadow:0 0 9px 0 rgba(58,63,71,.5);animation:kkPulse 1.4s ease-in-out infinite}
       .kk-hint .arrow{display:inline-block;animation:kkBounce 1.4s ease-in-out infinite}
+
+      /* ---- mobile phones (≤640px) ---- */
+      @media (max-width:640px){
+        .block-container{padding:0 14px !important}
+        .kk-panel{padding:0; max-width:100%}
+        .kk-brand{margin:18px 0 6px; gap:10px}
+        .kk-logo{width:34px; height:34px; font-size:13px}
+        .kk-title{font-size:18px}
+        .kk-sub{font-size:13px}
+        .kk-hint{font-size:12px; flex-wrap:wrap; gap:7px; padding:7px 13px}
+        [data-testid="stChatMessage"], [data-testid="stChatInput"],
+        [data-testid="stExpander"], [data-testid="stForm"],
+        [data-testid="stCaptionContainer"]{max-width:100%}
+        [data-testid="stChatMessage"]{padding:11px 13px}
+        /* easy-to-tap full-width buttons */
+        .stButton button, [data-testid="stFormSubmitButton"] button{width:100%}
+      }
     </style>
     """,
     unsafe_allow_html=True,
@@ -139,7 +230,9 @@ st.markdown(
 
 # 1) Marketing page (canned demo chat inside is hidden)
 html = (Path(__file__).resolve().parent.parent / "web" / "introduction.html").read_text(encoding="utf-8")
-components.html(html, height=2600, scrolling=True)
+# Height tuned to the rebuilt marketing page so it renders inline (no inner scroll);
+# the live intake assistant follows directly below.
+components.html(html, height=4360, scrolling=True)
 
 # ============================================================
 # 2) Live support intake assistant (native, LLM-driven)
@@ -157,10 +250,12 @@ if "record_saved_as" not in st.session_state:
 
 st.markdown('<div class="kk-panel">', unsafe_allow_html=True)
 st.markdown(
-    '<div class="kk-brand"><span class="kk-logo">DL</span>'
-    '<span class="kk-title">David Lau <span class="dim">· KK Agentic Support</span></span></div>'
-    '<p class="kk-sub">Live support assistant — tell me about your request and I’ll guide you '
-    "step by step, then save the details to our support drive.</p>"
+    '<span class="kk-eyebrow">Live support assistant</span>'
+    '<div class="kk-brand"><span class="kk-logo">kk</span>'
+    '<span class="kk-title">kkAgentic<span class="reg">®</span> Support '
+    '<span class="dim">· David Lau</span></span></div>'
+    '<p class="kk-sub">Tell me about your request and I’ll guide you step by step — '
+    "one question at a time — then save the details to our support drive.</p>"
     '<div class="kk-hint"><span class="dot"></span>Start by typing your reply below'
     '<span class="arrow">↓</span></div>',
     unsafe_allow_html=True,

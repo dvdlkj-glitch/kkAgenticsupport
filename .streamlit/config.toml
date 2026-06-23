@@ -1,0 +1,13 @@
+# Streamlit theme — light monochrome "brushed-metal" theme so the native intake
+# section (captions, expander, chat input, file uploader, buttons) matches the
+# light metallic marketing page (web/introduction.html) rendered above it.
+#
+# Streamlit Community Cloud reads this file automatically.
+
+[theme]
+base = "light"
+primaryColor = "#16181c"              # ink accent (buttons, focus, links)
+backgroundColor = "#e7e9eb"           # main page background (matches metallic --paper)
+secondaryBackgroundColor = "#f3f4f5"  # widget surfaces: uploader, expander, chat input
+textColor = "#16181c"                 # near-black editorial text
+font = "sans serif"
